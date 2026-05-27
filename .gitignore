@@ -1,0 +1,47 @@
+# Ambientes virtuais
+venv/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Dados — arquivos podem ser grandes; documentar origem no README
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Logs — manter estrutura, ignorar conteúdo
+logs/*
+!logs/.gitkeep
+
+# Notebooks — não commitar outputs
+.ipynb_checkpoints/
+
+# Streamlit
+.streamlit/
+
+# Variáveis de ambiente e segredos
+.env
+*.env
+
+# Testes e cobertura
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDEs
+.idea/
+*.swp
+*.swo
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
