@@ -37,6 +37,9 @@ logs/*
 .coverage
 htmlcov/
 
+# Notas locais de desenvolvimento
+CLAUDE.md
+
 # IDEs
 .idea/
 *.swp

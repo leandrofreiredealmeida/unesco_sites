@@ -29,16 +29,3 @@ Análise e modelagem dos sítios culturais e naturais inscritos na Lista do Patr
 | `description_word_count`, `full_text` | `short_description_en` | Features para pipeline NLP |
 
 **Análise exploratória:** distribuição temporal por décadas, por categoria e região, frequência individual dos critérios de inscrição (C1–C6, N7–N10), dispersão geográfica, sítios em perigo e mapa de correlações entre features numéricas.
-
-## Próximas Fases
-
-- **Clustering geográfico** — DBSCAN / KMeans sobre `latitude`, `longitude`, `area_hectares`
-- **Análise temporal** — série histórica de inscrições por `decade_inscribed`, categoria e região
-- **Similaridade por NLP** — TF-IDF ou embeddings sobre `full_text` para similaridade cosseno
-- **Dashboard** — painel interativo (Plotly / Streamlit) com critérios de inscrição
-
-## Stack
-
-```
-pandas · numpy · matplotlib · seaborn · plotly · scikit-learn · scipy · streamlit
-```
