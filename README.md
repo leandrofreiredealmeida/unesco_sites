@@ -11,6 +11,26 @@ Análise e modelagem dos sítios culturais e naturais inscritos na Lista do Patr
 
 ## Pipeline
 
+### Dashboard — `app.py`
+
+**Rodar:**
+```bash
+streamlit run app.py
+```
+
+Mapa interativo (Plotly + OpenStreetMap) com os 1 247 sítios coloridos pelas 12 categorias temáticas.
+Ao clicar em um sítio, um painel lateral exibe:
+
+- Card com nome, categoria temática, classificação UNESCO, região e ano de inscrição
+- Slider **Similaridade temática ← → Proximidade geográfica** (padrão 50/50)
+- Lista de 10 recomendações com categoria, distância em km, score NLP e barra de relevância
+
+**Score das recomendações:**
+
+```
+score = geo_weight × (1 − distância_haversine_norm) + (1 − geo_weight) × cosine_tfidf_norm
+```
+
 ### EDA — `notebooks/01_eda.ipynb`
 
 **Limpeza:**
@@ -78,3 +98,23 @@ Gráfico k-distâncias expõe o cotovelo natural dos dados e justifica o eps esc
 - Scatter plot geográfico colorido pelas 12 categorias
 - Heatmap de co-ocorrência multi-label entre categorias
 - Stacked bar: categorias temáticas × classificação UNESCO (Cultural / Natural / Mixed)
+
+## Estrutura do projeto
+
+```
+unesco_sites/
+├── app.py                          # Dashboard Streamlit
+├── .streamlit/config.toml          # Tema Nord
+├── data/
+│   ├── raw/whc001.csv
+│   └── processed/whc_processed.csv
+├── notebooks/
+│   ├── 01_eda.ipynb
+│   └── 02_modeling.ipynb
+└── src/unesco_sites/
+    ├── pipeline.py                 # Orquestrador: loader → tfidf → classify
+    ├── data/loader.py
+    └── models/
+        ├── similarity.py           # TF-IDF, prototype matching, constantes de cor
+        └── recommender.py          # Score combinado geo + NLP
+```
