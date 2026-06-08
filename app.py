@@ -30,7 +30,7 @@ st.markdown(
 # ── Data & model loading (cached) ─────────────────────────────────────────────
 
 
-@st.cache_resource(show_spinner="Carregando dados e modelos…")
+@st.cache_resource(show_spinner="Loading data and models…")
 def _load_pipeline() -> PipelineState:
     return build()
 
@@ -55,9 +55,12 @@ map_col, panel_col = st.columns([7, 3], gap="small")
 # ── Map ───────────────────────────────────────────────────────────────────────
 
 with map_col:
-    df_plot = df.assign(df_idx=df.index)
+    df_plot = df.assign(
+        df_idx=df.index,
+        danger_str=df["danger"].map({True: "Yes", False: "No"}),
+    )
 
-    fig = px.scatter_mapbox(
+    fig = px.scatter_map(
         df_plot,
         lat="latitude",
         lon="longitude",
@@ -65,37 +68,46 @@ with map_col:
         color_discrete_map=CAT_COLOR_MAP,
         category_orders={"category_thematic": CATEGORIES},
         hover_name="name_en",
-        hover_data={
-            "category_thematic": True,
-            "region": True,
-            "year_inscribed": True,
-            "latitude": False,
-            "longitude": False,
-            "df_idx": False,
-        },
+        hover_data={"latitude": False, "longitude": False, "df_idx": False},
         custom_data=[
-            "df_idx",
-            "name_en",
-            "category_thematic",
-            "category",
-            "region",
-            "year_inscribed",
+            "df_idx",           # [0]
+            "name_en",          # [1]
+            "category_thematic", # [2]
+            "category",         # [3]
+            "region",           # [4]
+            "year_inscribed",   # [5]
+            "date_inscribed",   # [6]
+            "danger_str",       # [7]
+            "description_en",   # [8]
         ],
         zoom=1.3,
         center={"lat": 20, "lon": 10},
-        mapbox_style="open-street-map",
+        map_style="open-street-map",
         height=820,
     )
-    fig.update_traces(marker={"size": 7, "opacity": 0.85})
+    fig.update_traces(
+        marker={"size": 7, "opacity": 0.85},
+        unselected={"marker": {"opacity": 0.85}},
+        selected={"marker": {"opacity": 1.0, "size": 9}},
+        hovertemplate=(
+            "<b>%{hovertext}</b><br><br>"
+            "Inscribed: %{customdata[6]}<br>"
+            "Endangered: %{customdata[7]}<br>"
+            "Category: %{customdata[3]}"
+            "<extra></extra>"
+        ),
+    )
     fig.update_layout(
         paper_bgcolor="#2E3440",
         font={"color": "#ECEFF4", "family": "sans-serif"},
         legend={
-            "title": {"text": "Categoria Temática", "font": {"color": "#D8DEE9", "size": 12}},
+            "title": {"text": "Thematic Category", "font": {"color": "#D8DEE9", "size": 12}},
             "bgcolor": "#3B4252",
             "bordercolor": "#4C566A",
             "borderwidth": 1,
             "font": {"color": "#D8DEE9", "size": 10},
+            "y": 0.5,
+            "yanchor": "middle",
         },
         margin={"l": 0, "r": 0, "t": 0, "b": 0},
         uirevision="map",  # keeps zoom/pan state across reruns
@@ -104,7 +116,7 @@ with map_col:
     selected = st.plotly_chart(
         fig,
         on_select="rerun",
-        use_container_width=True,
+        width="stretch",
         key=f"map_{st.session_state['map_key']}",
     )
 
@@ -119,15 +131,15 @@ with panel_col:
 
     if site_cd is None:
         # ── Empty state ───────────────────────────────────────────────────────
-        st.markdown("## 🌍 Explorar sítios")
+        st.markdown("## 🌍 Explore sites")
         st.markdown(
-            "Clique em qualquer marcador no mapa para descobrir "
-            "sítios geograficamente próximos ou tematicamente similares."
+            "Click any marker on the map to discover "
+            "geographically nearby or thematically similar sites."
         )
         st.divider()
-        st.markdown(f"**{len(df):,} sítios** em {df['region'].nunique()} regiões")
-        st.markdown(f"**{df['category_thematic'].nunique()} categorias** temáticas")
-        st.markdown(f"Inscrições de **{int(df['year_inscribed'].min())}** a **{int(df['year_inscribed'].max())}**")
+        st.markdown(f"**{len(df):,} sites** across {df['region'].nunique()} regions")
+        st.markdown(f"**{df['category_thematic'].nunique()} thematic** categories")
+        st.markdown(f"Inscriptions from **{int(df['year_inscribed'].min())}** to **{int(df['year_inscribed'].max())}**")
 
         # Mini distribution
         counts = (
@@ -166,6 +178,7 @@ with panel_col:
         site_region = str(site_cd[4])
         raw_year = site_cd[5]
         site_year = int(raw_year) if raw_year and str(raw_year) not in ("nan", "None") else "—"
+        site_desc = str(site_cd[8]) if site_cd[8] and str(site_cd[8]) not in ("nan", "None") else ""
 
         color = CAT_COLOR_MAP.get(site_thematic, "#88C0D0")
         short = SHORT_CAT.get(site_thematic, site_thematic)
@@ -187,6 +200,10 @@ with panel_col:
                 <span style="color:#A0B0C0; font-size:0.8em;">{site_year}</span>
               </div>
               <div style="color:#81A1C1; font-size:0.78em; margin-top:4px;">{site_region}</div>
+              {f'''<div style="color:#D8DEE9; font-size:0.78em; margin-top:10px;
+                              max-height:120px; overflow-y:auto; line-height:1.5;
+                              border-top:1px solid #4C566A; padding-top:8px;">{site_desc}</div>'''
+               if site_desc else ""}
             </div>
             """,
             unsafe_allow_html=True,
@@ -194,7 +211,7 @@ with panel_col:
 
         # ── Slider ────────────────────────────────────────────────────────────
         geo_weight = st.slider(
-            "Critério de recomendação",
+            "Recommendation criterion",
             min_value=0.0,
             max_value=1.0,
             value=0.5,
@@ -202,12 +219,18 @@ with panel_col:
             key="geo_weight",
         )
         lbl_col1, lbl_col2 = st.columns(2)
-        lbl_col1.caption("← Similaridade temática")
-        lbl_col2.caption("Proximidade geo →")
+        lbl_col1.caption("← Thematic similarity")
+        lbl_col2.markdown(
+            '<p style="text-align:right; font-size:0.8em; color:#888; margin:0;">Geographic proximity →</p>',
+            unsafe_allow_html=True,
+        )
 
         # ── Recommendations ───────────────────────────────────────────────────
         st.markdown(
-            f"### Gostou de _{site_name}_?\n**Talvez você possa gostar de…**"
+            f'<p style="font-size:1.35em; font-weight:600; margin-bottom:2px;">'
+            f'Enjoyed <em><span style="color:{color};">{site_name}</span></em>?</p>'
+            f'<p style="font-weight:700; margin-top:0;">You might also like…</p>',
+            unsafe_allow_html=True,
         )
 
         recs = get_recommendations(
@@ -252,7 +275,7 @@ with panel_col:
                 unsafe_allow_html=True,
             )
 
-        if st.button("Limpar seleção", use_container_width=True):
+        if st.button("Clear selection", width="stretch"):
             st.session_state["site_cd"] = None
             st.session_state["map_key"] += 1
             st.rerun()
