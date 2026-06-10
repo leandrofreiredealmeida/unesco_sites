@@ -18,17 +18,20 @@ Análise e modelagem dos sítios culturais e naturais inscritos na Lista do Patr
 streamlit run app.py
 ```
 
-Mapa interativo (Plotly + OpenStreetMap) com os 1 247 sítios coloridos pelas 12 categorias temáticas.
-Ao clicar em um sítio, um painel lateral exibe:
+Mapa interativo (Plotly + OpenStreetMap) com os 1 247 sítios coloridos pelas 12 categorias temáticas. Labels da UI em inglês; nomes internos das categorias preservados como identificadores no pipeline.
 
-- Card com nome, categoria temática, classificação UNESCO, região e ano de inscrição
-- Slider **Similaridade temática ← → Proximidade geográfica** (padrão 50/50)
-- Lista de 10 recomendações com categoria, distância em km, score NLP e barra de relevância
+Estado inicial do painel: contagem de sítios, regiões e distribuição por categoria com barras proporcionais.
+
+Ao clicar em um marcador:
+
+- Card com nome, badge de categoria, classificação UNESCO, região e ano de inscrição
+- Slider **Thematic similarity ← → Geographic proximity** (padrão 50/50)
+- 10 recomendações com badge de categoria, distância em km, score NLP e barra de relevância
 
 **Score das recomendações:**
 
 ```
-score = geo_weight × (1 − distância_haversine_norm) + (1 − geo_weight) × cosine_tfidf_norm
+score = geo_weight × (1 − haversine_norm) + (1 − geo_weight) × cosine_tfidf_norm
 ```
 
 ### EDA — `notebooks/01_eda.ipynb`

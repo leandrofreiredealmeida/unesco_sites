@@ -104,19 +104,34 @@ THEMATIC_COLORS: list[str] = [
 
 CAT_COLOR_MAP: dict[str, str] = dict(zip(CATEGORIES, THEMATIC_COLORS))
 
+CATEGORY_EN: dict[str, str] = {
+    "Ruínas e sítios arqueológicos": "Ruins & Archaeological Sites",
+    "Centros urbanos vivos": "Living Urban Centres",
+    "Conjuntos religiosos e sagrados": "Religious & Sacred Ensembles",
+    "Fortificações e sistemas defensivos": "Fortifications & Defensive Systems",
+    "Paisagens culturais e parques humanizados": "Cultural Landscapes",
+    "Palácios e sedes de poder político": "Palaces & Seats of Power",
+    "Necrópoles e espaços funerários": "Necropolises & Funerary Sites",
+    "Engenharia e infraestrutura histórica": "Historic Engineering & Infrastructure",
+    "Conjuntos rurais e aldeias": "Rural Ensembles & Villages",
+    "Sítios industriais e tecnológicos": "Industrial & Technological Sites",
+    "Arte rupestre e inscrições primitivas": "Rock Art & Early Inscriptions",
+    "Monumentos comemorativos e memoriais": "Commemorative Monuments & Memorials",
+}
+
 SHORT_CAT: dict[str, str] = {
-    "Ruínas e sítios arqueológicos": "Ruínas",
-    "Centros urbanos vivos": "Centros urbanos",
-    "Conjuntos religiosos e sagrados": "Religiosos",
-    "Fortificações e sistemas defensivos": "Fortificações",
-    "Paisagens culturais e parques humanizados": "Paisagens culturais",
-    "Palácios e sedes de poder político": "Palácios",
-    "Necrópoles e espaços funerários": "Necrópoles",
-    "Engenharia e infraestrutura histórica": "Engenharia",
-    "Conjuntos rurais e aldeias": "Aldeias rurais",
-    "Sítios industriais e tecnológicos": "Industriais",
-    "Arte rupestre e inscrições primitivas": "Arte rupestre",
-    "Monumentos comemorativos e memoriais": "Memoriais",
+    "Ruínas e sítios arqueológicos": "Ruins",
+    "Centros urbanos vivos": "Urban Centres",
+    "Conjuntos religiosos e sagrados": "Religious",
+    "Fortificações e sistemas defensivos": "Fortifications",
+    "Paisagens culturais e parques humanizados": "Cultural Landscapes",
+    "Palácios e sedes de poder político": "Palaces",
+    "Necrópoles e espaços funerários": "Necropolises",
+    "Engenharia e infraestrutura histórica": "Engineering",
+    "Conjuntos rurais e aldeias": "Rural Villages",
+    "Sítios industriais e tecnológicos": "Industrial",
+    "Arte rupestre e inscrições primitivas": "Rock Art",
+    "Monumentos comemorativos e memoriais": "Memorials",
 }
 
 MULTILABEL_THRESHOLD = 0.05

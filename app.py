@@ -4,7 +4,7 @@ import streamlit as st
 import plotly.express as px
 
 from unesco_sites.models.recommender import get_recommendations
-from unesco_sites.models.similarity import CAT_COLOR_MAP, CATEGORIES, SHORT_CAT
+from unesco_sites.models.similarity import CAT_COLOR_MAP, CATEGORIES, CATEGORY_EN, SHORT_CAT
 from unesco_sites.pipeline import PipelineState, build
 
 # ── Page config ──────────────────────────────────────────────────────────────
@@ -54,19 +54,23 @@ map_col, panel_col = st.columns([7, 3], gap="small")
 
 # ── Map ───────────────────────────────────────────────────────────────────────
 
+_cat_color_map_en = {CATEGORY_EN[k]: v for k, v in CAT_COLOR_MAP.items()}
+_categories_en = [CATEGORY_EN[c] for c in CATEGORIES]
+
 with map_col:
     df_plot = df.assign(
         df_idx=df.index,
         danger_str=df["danger"].map({True: "Yes", False: "No"}),
+        category_en=df["category_thematic"].map(CATEGORY_EN),
     )
 
     fig = px.scatter_map(
         df_plot,
         lat="latitude",
         lon="longitude",
-        color="category_thematic",
-        color_discrete_map=CAT_COLOR_MAP,
-        category_orders={"category_thematic": CATEGORIES},
+        color="category_en",
+        color_discrete_map=_cat_color_map_en,
+        category_orders={"category_en": _categories_en},
         hover_name="name_en",
         hover_data={"latitude": False, "longitude": False, "df_idx": False},
         custom_data=[
